@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     'users',
     'allauth',
     'allauth.account',
+    'django.contrib.flatpages',
 ]
-SITE_ID=1
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -136,3 +137,4 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 LOGIN_URL='/auth/login/'
 LOGIN_REDIRECT_URL='index'
 LOGOUT_REDIRECT_URL='index'
+SITE_ID=1
