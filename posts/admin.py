@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post,Profile
 
 
 
@@ -9,5 +9,6 @@ class PostAdmin(admin.ModelAdmin):
     search_fields=('text',)
     list_filter=('pub_date',)
 admin.site.register(Post,PostAdmin)
+admin.site.register(Profile)
 # Register your models here.
 

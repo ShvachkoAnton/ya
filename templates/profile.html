@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for posts in user_posts %}
+<ul>   <li>
+    {{ posts|linebreaksbr}}
+    </li>
+    </ul>  
+    {% endfor %}
+
+
+
+{% endblock content %}
