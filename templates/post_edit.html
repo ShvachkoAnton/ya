@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Изменить запись</h1>
+<form action='' method='post'>
+{% csrf_token %}
+{{form.as_p}}
+<button class="btn btn-success ml-2" type="submit">Изменить запись</button>
+</form>
+{% endblock content%}

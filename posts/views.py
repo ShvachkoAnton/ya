@@ -1,22 +1,25 @@
 from django.shortcuts import render
 from .models import Post, Profile, User
-from django.views.generic import ListView,CreateView,DetailView
+from django.views.generic import ListView,CreateView,DetailView,UpdateView
 from .models  import Post
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 
 
-class New(LoginRequiredMixin,CreateView):
+class News(LoginRequiredMixin,CreateView):
     model=Post
-    fields=['text']
+    fields=('text',)
     template_name='new.html'
+    pk_url_kwarg = "post_id"
     success_url=reverse_lazy('index')
     def form_valid(self,form):
         form.instance.author=self.request.user
         return super().form_valid(form)
+   
+    
 class PostList(LoginRequiredMixin,ListView):
     model=Post
     context_object_name='posts'
@@ -27,17 +30,28 @@ class PostList(LoginRequiredMixin,ListView):
     template_name='index.html'
 
 
-def profile(request,pk=None):
-       
+def user_posts(request, username):
+  posts = Post.objects.filter(author__username=username)
+  return render(request, 'profile.html', {'posts':posts})
 
-    if pk:
-            
-        post_owner = get_object_or_404(User, pk=pk)
-        user_posts=Post.objects.filter(author_id=pk)
-            
-    else:
-        post_owner = request.author
-        user_posts=Post.objects.filter(author_id=pk)
-    return render(request, 'profile.html', {'post_owner': post_owner, 'user_posts': user_posts})
-
+    
+def post_view(request,username,post_id):
+    post = Post.objects.get(id=post_id)
+    posts = Post.objects.filter(author__username=username)
+    context={'post':post, 'posts':posts}
+    return render(request, 'post.html',context)
 # Create your views here.
+
+class Update(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
+    model=Post
+    template_name='post_edit.html'
+    fields=['text']
+    success_url=reverse_lazy('index')
+    pk_url_kwarg = "post_id"
+    def test_func(self): 
+        obj=self.get_object()
+        return obj.author==self.request.user
+    
+    
+
+

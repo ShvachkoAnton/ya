@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{{post}}
+<hr>
+<a href="{% url 'edit' request.user.id post.id %}">Изменить запись</a></p>
+{% endblock content %}

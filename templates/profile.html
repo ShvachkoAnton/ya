@@ -2,13 +2,16 @@
 
 {% block content %}
 
-{% for posts in user_posts %}
-<ul>   <li>
-    {{ posts|linebreaksbr}}
-    </li>
-    </ul>  
-    {% endfor %}
+{% for post in posts %}
+<ul><li>
+<hr>
+<p>{{post}}</p>
+<hr>
+<a href="{% url 'tak'  request.user.id post.id %}">Посмотреть запись отдельно</a></p>
 
-
+</li>
+</ul>
+{% endfor %}
 
 {% endblock content %}
+
