@@ -16,8 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.contrib.flatpages import views
-
-
+from django.conf.urls import handler404, handler500
+handler404 = 'posts.views.hendler404'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('about/',include('django.contrib.flatpages.urls')),
@@ -31,3 +31,4 @@ urlpatterns += [
     path('about-us/', views.flatpage, {'url': '/about-us/'}, name='about'),
     path('license/', views.flatpage, {'url': '/license/'}, name='license'),
 ]
+
