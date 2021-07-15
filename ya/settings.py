@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'django.contrib.flatpages',
+    'sorl.thumbnail', #для изображений +Pillow
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,5 @@ LOGIN_URL='/auth/login/'
 LOGIN_REDIRECT_URL='index'
 LOGOUT_REDIRECT_URL='index'
 SITE_ID=1
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

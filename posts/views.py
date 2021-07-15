@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import Post, Profile, User
+from django.contrib.auth.decorators import user_passes_test
+from .forms import CommentForm
 from django.views.generic import ListView,CreateView,DetailView,UpdateView
 from .models  import Post
 from django.core.paginator import Paginator
@@ -13,7 +15,7 @@ def hendler404(request,exception):
 
 class News(LoginRequiredMixin,CreateView):
     model=Post
-    fields=('text',)
+    fields=('text','image')
     template_name='new.html'
     pk_url_kwarg = "post_id"
     success_url=reverse_lazy('index')
@@ -44,10 +46,38 @@ def post_view(request,username,post_id):
     return render(request, 'post.html',context)
 # Create your views here.
 
+@login_required
+def comment_add(request,username,post_id):
+    post=Post.objects.get(id=post_id)
+    
+    if request.method=='POST':
+        form=CommentForm(request.POST)
+        if form.is_valid():
+            
+            comment=form.save(commit=False)
+            comment.author = request.user
+            
+            comment.post=post
+            comment.save()
+            return redirect('index')
+    else:
+        form=CommentForm()
+    return render(request,'add_comments.html',{'form':form})
+
+
+
+
+
+
+
+
+
+
+
 class Update(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     model=Post
     template_name='post_edit.html'
-    fields=['text']
+    fields=['text','image']
     success_url=reverse_lazy('index')
     pk_url_kwarg = "post_id"
     def test_func(self): 

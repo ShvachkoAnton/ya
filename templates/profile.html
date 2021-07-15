@@ -8,6 +8,7 @@
 <p>{{post}}</p>
 <hr>
 <a href="{% url 'tak'  request.user.id post.id %}">Посмотреть запись отдельно</a></p>
+<a href="{% url 'tak' request.user.id post.id%}">Комментарии: {{post.comments.count}}</a>
 
 </li>
 </ul>

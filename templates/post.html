@@ -3,6 +3,21 @@
 {% block content %}
 
 {{post}}
+{% for comment in post.comments.all  %}
+<div class="comment">
+    <div class="date">{{ comment.created }}</div>
+    <strong>{{ comment.author }}</strong>
+    <p>{{ comment.text|linebreaks }}</p>
+</div>
+
+{% empty %}
+<p>No comments here yet :(</p>
+{% endfor %}
 <hr>
+
+<a href="{% url 'add_comment' request.user.id post.id %}">Добавить комментарий</a></p>
 <a href="{% url 'edit' request.user.id post.id %}">Изменить запись</a></p>
+
+
+
 {% endblock content %}

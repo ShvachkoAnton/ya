@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post,Profile
+from .models import Post,Profile,Comment
 
 
 
@@ -10,5 +10,6 @@ class PostAdmin(admin.ModelAdmin):
     list_filter=('pub_date',)
 admin.site.register(Post,PostAdmin)
 admin.site.register(Profile)
+admin.site.register(Comment)
 # Register your models here.
 
