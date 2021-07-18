@@ -1,13 +1,19 @@
 from django.shortcuts import render,redirect
-from .models import Post, Profile, User
+from .models import Post, Profile, Following
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 from .forms import CommentForm
 from django.views.generic import ListView,CreateView,DetailView,UpdateView
-from .models  import Post
+from .models  import Post,Following
+from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from common.decorators import ajax_required
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 def hendler404(request,exception):
@@ -33,10 +39,11 @@ class PostList(LoginRequiredMixin,ListView):
     ordering=['-pub_date']
     template_name='index.html'
 
-
+@cache_page(60*15)
 def user_posts(request, username):
+  tak=Post.objects.all
   posts = Post.objects.filter(author__username=username)
-  return render(request, 'profile.html', {'posts':posts})
+  return render(request, 'profile.html', {'posts':posts,'tak':tak })
 
     
 def post_view(request,username,post_id):
@@ -44,7 +51,6 @@ def post_view(request,username,post_id):
     posts = Post.objects.filter(author__username=username)
     context={'post':post, 'posts':posts}
     return render(request, 'post.html',context)
-# Create your views here.
 
 @login_required
 def comment_add(request,username,post_id):
@@ -70,10 +76,6 @@ def comment_add(request,username,post_id):
 
 
 
-
-
-
-
 class Update(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     model=Post
     template_name='post_edit.html'
@@ -87,3 +89,37 @@ class Update(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     
 
 
+
+@login_required
+def user_list(request):
+    users=User.objects.filter(is_active=True)
+    return render(request,'user_list.html',{ 'section':'people','users':users})
+
+@login_required
+def user_detail(request,username):
+    user=get_object_or_404(User,username=username,is_active=True)
+    return render(request,'user_detail.html',{'section':'people','user':user})
+
+
+
+
+@ajax_required
+@require_POST
+@login_required
+def user_follow(request):       
+    user_id=request.POST.get('id')
+    action=request.POST.get('action')
+    if user_id and action:
+        try:
+            user=User.objects.get(id=user_id)
+            if action=='follow':
+                Following.objects.get_or_create(
+                    user=request.user,author=user)
+            else:
+                Following.objects.filter(user=request.user,author=user).delete()
+            return JsonResponse({'status':'ok'})
+        except User.DoesNotExist:
+            return JsonResponse({'status':'error'})
+    return JsonResponse({'status':'error'})
+
+        

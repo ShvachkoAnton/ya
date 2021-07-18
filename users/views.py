@@ -6,6 +6,8 @@ from .forms import CreationForm, Name
 
 from django.urls import reverse_lazy
 
+from django.views.decorators.cache import cache_page
+
 class SignUpp(CreateView):
     form_class=CreationForm
     success_url=reverse_lazy("login") #перенаправление после отправки формы
@@ -14,6 +16,7 @@ class SignUpp(CreateView):
 
 
 # Create your views here.
+
 def get_name(request):
     if request.method=='POST':
         form=Name(request.POST)

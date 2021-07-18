@@ -2,17 +2,25 @@
 
 {% block content %}
 
-{% for post in posts %}
+{% for a in posts %}
 <ul><li>
 <hr>
-<p>{{post}}</p>
+<p>{{a}}</p>       
 <hr>
-<a href="{% url 'tak'  request.user.id post.id %}">Посмотреть запись отдельно</a></p>
-<a href="{% url 'tak' request.user.id post.id%}">Комментарии: {{post.comments.count}}</a>
+<a href="{% url 'tak'  request.user.id a.id %}">Посмотреть запись отдельно</a></p>
+<a href="{% url 'tak' request.user.id a.id%}">Комментарии: {{a.comments.count}}</a>
 
 </li>
 </ul>
+
 {% endfor %}
+
+
+
+
+
+
+
 
 {% endblock content %}
 
