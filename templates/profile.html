@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<a href="{% url 'followToggle' author=user.username  %}">Подписаться</a>
+
 {% for a in posts %}
 <ul><li>
 <hr>
@@ -14,10 +16,6 @@
 </ul>
 
 {% endfor %}
-
-
-
-
 
 
 

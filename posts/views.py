@@ -1,16 +1,16 @@
 from django.shortcuts import render,redirect
-from .models import Post, Profile, Following
+from django.urls import reverse
+from .models import Post,Contact
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 from .forms import CommentForm
 from django.views.generic import ListView,CreateView,DetailView,UpdateView
-from .models  import Post,Following
 from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from common.decorators import ajax_required
 
@@ -92,34 +92,53 @@ class Update(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
 
 @login_required
 def user_list(request):
-    users=User.objects.filter(is_active=True)
-    return render(request,'user_list.html',{ 'section':'people','users':users})
-
+    users = User.objects.filter(is_active=True)
+    return render(request,'user_list.html',{'section': 'people','users': users})
 @login_required
-def user_detail(request,username):
-    user=get_object_or_404(User,username=username,is_active=True)
-    return render(request,'user_detail.html',{'section':'people','user':user})
-
-
+def user_detail(request, username):
+    user = get_object_or_404(User,username=username,is_active=True)
+    return render(request,'user_detail.html',{'section': 'people',
+    'user': user})
 
 
 @ajax_required
 @require_POST
 @login_required
-def user_follow(request):       
-    user_id=request.POST.get('id')
-    action=request.POST.get('action')
+def user_follow(request):
+    user_id = request.POST.get('id')
+    action = request.POST.get('action')
     if user_id and action:
         try:
-            user=User.objects.get(id=user_id)
-            if action=='follow':
-                Following.objects.get_or_create(
-                    user=request.user,author=user)
+            user = User.objects.get(id=user_id)
+            if action == 'follow':
+                Contact.objects.get_or_create(user_from=request.user,user_to=user)
             else:
-                Following.objects.filter(user=request.user,author=user).delete()
+                Contact.objects.filter(user_from=request.user, user_to=user).delete()
             return JsonResponse({'status':'ok'})
         except User.DoesNotExist:
             return JsonResponse({'status':'error'})
     return JsonResponse({'status':'error'})
 
-        
+def profile(request, username):
+    userProfile = User.objects.get(username=username)
+
+    data = {
+        "author": userProfile,
+    }
+    return render(request, "authorprofile.html", data)
+
+
+
+
+def followToggle(request, author):
+    authorObj = User.objects.get(username=author)
+    currentUserObj = User.objects.get(username=request.user.username)
+    following = authorObj.following.all()
+
+    if author != currentUserObj.username:
+        if currentUserObj in following:
+            authorObj.following.remove(currentUserObj.id)
+        else:
+            authorObj.following.add(currentUserObj.id)
+
+    return HttpResponseRedirect(reverse(profile, args=[authorObj.username]))
