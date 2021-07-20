@@ -10,7 +10,7 @@ from django.shortcuts import render
 urlpatterns=[path('',PostList.as_view(), name='index'),
 path('users/',user_list,name='user_list'),
 path('users/follow/',user_follow, name='user_follow'),
-path("profile/<str:username>/", profile, name="profile"),
+path("profile/<str:username>/", profile, name="profilee"),
 path("followToggle/<str:author>/",followToggle, name="followToggle"),
 
 path('users/<str:username>/',user_detail,name='user_detail'),

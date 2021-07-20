@@ -40,13 +40,13 @@ class PostList(LoginRequiredMixin,ListView):
     template_name='index.html'
 
 @cache_page(60*15)
-def user_posts(request, username):
+def user_posts(request, username):   #все посты
   tak=Post.objects.all
-  posts = Post.objects.filter(author__username=username)
+  posts = Post.objects.filter(author__username=username ) # от конкретного автора
   return render(request, 'profile.html', {'posts':posts,'tak':tak })
 
     
-def post_view(request,username,post_id):
+def post_view(request,username,post_id): #каждый по отдельности
     post = Post.objects.get(id=post_id) 
     posts = Post.objects.filter(author__username=username)
     context={'post':post, 'posts':posts}
@@ -119,11 +119,12 @@ def user_follow(request):
             return JsonResponse({'status':'error'})
     return JsonResponse({'status':'error'})
 
-def profile(request, username):
+def profile(request, username,):
     userProfile = User.objects.get(username=username)
-
+    
+    tak=Post.objects.filter(author__username=username)
     data = {
-        "author": userProfile,
+        "author": userProfile, 'tak':tak
     }
     return render(request, "authorprofile.html", data)
 

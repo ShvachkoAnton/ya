@@ -1,4 +1,4 @@
-% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% block header %}
 {% endblock header %}
@@ -9,18 +9,19 @@
   <div class="container">
     <div class="main-body">
       <div class="row gutters-sm">
-        <div class="col-md-4 mb-3">
+        <div class="col-md-14 mb-6">
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
-                <img src="{{ author.image.url }}" alt="{{ author.username }}" class="rounded-circle" width="150" />
+              
                 <div class="mt-3">
                   <h4>{{ author.username }}</h4>
+                  <h4>{{ author.get_full_name }}</h4>
                   <div class="row">
-                    <b> following : </b>
+                    <b> Подписчиков : </b>
                     <p class="text-muted"> {{ author.following.count }} </p>
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    <b> followers : </b>
+                    <b> Подписан на : </b>
                     <p class="text-muted"> {{ author.followers.count }} </p>
                   </div>
                   <h6 class="text-muted font-size-sm">
@@ -28,44 +29,24 @@
                   </h6>
                   {% if user.is_authenticated %}
                     {% if user in author.following.all %}
-                        <a href="{% url 'followToggle' author=author.username  %}" class="btn btn-primary">Unfollow</a>
+                       
+                        <a href="{% url 'followToggle' author=author.username  %}" class="btn btn-primary">Отписаться</a>
+                     
+                    
                       {% else %}
-                        <a  href="{% url 'followToggle' author=author.username  %}" class="btn btn-primary"> Follow </a>
+                        <a  href="{% url 'followToggle' author=author.username  %}" class="btn btn-primary"> Подписаться </a>
                     {% endif %}
-                      <button class="btn btn-outline-primary">Message</button>
+                    
                   {% else %}
                     <p class="text-muted"> please, login to follow </p>
                   {% endif %}
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="card mt-3">
-            <ul class="list-group list-group-flush">
-              {% if author.website %}
-              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                <h6 class="mb-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-globe mr-2 icon-inline">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path
-                      d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                    </path>
-                  </svg>Website
-                </h6>
-                <span class="text-secondary">{{ author.website }}</span>
-              </li>
-              {% endif %}
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
-
+      {{tak.author.get_full_name}}      
+    {% for post in tak %}
+    <h3>
+Дата публикации: {{ post.pub_date|date:"d M Y" }}
+    </h3>                                                                                  
+    <p>{{ post.text|linebreaksbr }}</p>
+    {% endfor %}
 
 {% endblock content %}
